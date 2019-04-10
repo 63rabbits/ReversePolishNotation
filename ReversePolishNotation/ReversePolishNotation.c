@@ -27,7 +27,7 @@ const RPNE_t operators[] = {
 char *convertToRPN(char *expression, char *separator) {
     char *s = "\0";
     char *rpn = calloc(strlen(expression) * 2 + 1, sizeof(char));
-    Queue_t *Q = convertQueueToRPN(expression);
+    QUEUE_t *Q = convertQueueToRPN(expression);
     while (!isEmptyQueue(Q)) {
         char *token = deQueue(Q);
         strcat(rpn, s);
@@ -39,9 +39,9 @@ char *convertToRPN(char *expression, char *separator) {
     return rpn;
 }
 
-Queue_t *convertQueueToRPN(char *expression) {
-    Queue_t *tokenQ = createTokenQueue(expression);
-    Queue_t *Q = createQueue();
+QUEUE_t *convertQueueToRPN(char *expression) {
+    QUEUE_t *tokenQ = createTokenQueue(expression);
+    QUEUE_t *Q = createQueue();
     Stack_t *S = createStack();
     while (!isEmptyQueue(tokenQ)) {
         char *token = deQueue(tokenQ);
@@ -112,18 +112,18 @@ bool destroyCellOnRPN(RPNE_t *element, RPN_OPTION_e option) {
     return true;
 }
 
-Queue_t *createTokenQueue(char *expression) {
+QUEUE_t *createTokenQueue(char *expression) {
     char *exp = calloc(strlen(expression) + 1, sizeof(char));
     strcpy(exp, expression);
     
-    Queue_t *inQ = createQueue();
-    Queue_t *outQ = createQueue();
+    QUEUE_t *inQ = createQueue();
+    QUEUE_t *outQ = createQueue();
     enQueue(outQ, exp);
     
     int i = 0;
     while (operators[i].priority > 0) {
         // swap in/out queue.
-        Queue_t *tempQ = inQ;
+        QUEUE_t *tempQ = inQ;
         inQ = outQ;
         outQ = tempQ;
 
@@ -139,7 +139,7 @@ Queue_t *createTokenQueue(char *expression) {
     return outQ;
 }
 
-Queue_t *splitStringRPN(Queue_t *Q, char *keyword, char *string) {
+QUEUE_t *splitStringRPN(QUEUE_t *Q, char *keyword, char *string) {
     // Block illegal parameters.
     if (Q == NULL) return NULL;
     
