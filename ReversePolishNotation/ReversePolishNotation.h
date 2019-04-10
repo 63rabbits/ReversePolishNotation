@@ -23,9 +23,7 @@
 
 typedef enum RPNOption {
     RPN_OPTION_NONE,
-    RPN_OPTION_WITH_ELEMENT,
-    
-    
+    RPN_OPTION_WITH_ELEMENT
 } RPN_OPTION_e;
 
 typedef struct Element_RPN {
