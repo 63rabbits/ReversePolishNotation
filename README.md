@@ -1,3 +1,3 @@
 # ReversePolishNotation
 
-Convert the expression to reerse polish notation.
+Convert the expression to reverse polish notation.
