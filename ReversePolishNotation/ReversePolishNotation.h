@@ -36,10 +36,10 @@ extern const RPNE_t operators[];
 
 //////////////////////////////////////////////////
 char *convertToRPN(char *expression, char *separator);
-QUEUE_t *convertQueueToRPN(char *expression);
-int getPriorityOnRPN(char *token);
-RPNE_t *createCellOnRPN(char *token);
-bool destroyCellOnRPN(RPNE_t *element, RPN_OPTION_e option);
+QUEUE_t *convertToRPNQueue(char *expression);
+int getPriorityForRPN(char *token);
+RPNE_t *createCellForRPN(char *token);
+bool destroyCellForRPN(RPNE_t *element, RPN_OPTION_e option);
 QUEUE_t *createTokenQueue(char *expression);
 QUEUE_t *splitStringRPN(QUEUE_t *Q, char *keyword, char *string);
 

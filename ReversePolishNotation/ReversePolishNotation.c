@@ -27,7 +27,7 @@ const RPNE_t operators[] = {
 char *convertToRPN(char *expression, char *separator) {
     char *s = "\0";
     char *rpn = calloc(strlen(expression) * 2 + 1, sizeof(char));
-    QUEUE_t *Q = convertQueueToRPN(expression);
+    QUEUE_t *Q = convertToRPNQueue(expression);
     while (!isEmptyQueue(Q)) {
         char *token = deQueue(Q);
         strcat(rpn, s);
@@ -39,13 +39,13 @@ char *convertToRPN(char *expression, char *separator) {
     return rpn;
 }
 
-QUEUE_t *convertQueueToRPN(char *expression) {
+QUEUE_t *convertToRPNQueue(char *expression) {
     QUEUE_t *tokenQ = createTokenQueue(expression);
     QUEUE_t *Q = createQueue();
     Stack_t *S = createStack();
     while (!isEmptyQueue(tokenQ)) {
         char *token = deQueue(tokenQ);
-        RPNE_t *element = createCellOnRPN(token);
+        RPNE_t *element = createCellForRPN(token);
         
         RPNE_t *stackElement = peekStack(S);
         while ((stackElement != NULL) &&
@@ -53,7 +53,7 @@ QUEUE_t *convertQueueToRPN(char *expression) {
                (stackElement->priority >= element->priority)) {
             stackElement = popStack(S);
             enQueue(Q, stackElement->token);
-            destroyCellOnRPN(stackElement, RPN_OPTION_NONE);
+            destroyCellForRPN(stackElement, RPN_OPTION_NONE);
             stackElement = peekStack(S);
         }
         
@@ -61,19 +61,19 @@ QUEUE_t *convertQueueToRPN(char *expression) {
             pushStack(S, element);
         }
         else {
-            destroyCellOnRPN(element, RPN_OPTION_WITH_ELEMENT);
+            destroyCellForRPN(element, RPN_OPTION_WITH_ELEMENT);
             stackElement = peekStack(S);
             if ((stackElement != NULL) &&
                 (strcmp(stackElement->token, OPERATOR_LEFT_BRACKET) == 0)) {
                 stackElement = popStack(S);
-                destroyCellOnRPN(stackElement, RPN_OPTION_WITH_ELEMENT);
+                destroyCellForRPN(stackElement, RPN_OPTION_WITH_ELEMENT);
             }
         }
     }
     while (!isEmptyStack(S)) {
         RPNE_t *stackElement = popStack(S);
         enQueue(Q, stackElement->token);
-        destroyCellOnRPN(stackElement, RPN_OPTION_NONE);
+        destroyCellForRPN(stackElement, RPN_OPTION_NONE);
     }
     destroyStack(S, STACK_OPTION_WITH_ELEMENT);
     destroyQueue(tokenQ, QUEUE_OPTION_WITH_ELEMENT);
@@ -81,7 +81,7 @@ QUEUE_t *convertQueueToRPN(char *expression) {
     return Q;
 }
 
-int getPriorityOnRPN(char *token) {
+int getPriorityForRPN(char *token) {
     int i = 0;
     while (operators[i].priority > 0) {
         if (strcmp(token, operators[i].token) == 0) {
@@ -92,15 +92,15 @@ int getPriorityOnRPN(char *token) {
     return INT_MAX; // operand's priority.
 }
 
-RPNE_t *createCellOnRPN(char *token) {
+RPNE_t *createCellForRPN(char *token) {
     RPNE_t *element = malloc(sizeof(RPNE_t));
     if (element == NULL) return NULL;
     element->token = token;
-    element->priority = getPriorityOnRPN(token);
+    element->priority = getPriorityForRPN(token);
     return element;
 }
 
-bool destroyCellOnRPN(RPNE_t *element, RPN_OPTION_e option) {
+bool destroyCellForRPN(RPNE_t *element, RPN_OPTION_e option) {
     // Block illegal parameters.
     if (element == NULL) return false;
     if ((option == RPN_OPTION_WITH_ELEMENT) &&
